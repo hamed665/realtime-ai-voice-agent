@@ -1,0 +1,24 @@
+name: Voice runtime
+on:
+  push:
+    branches: [main, 'feat/**']
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: uv sync --locked --group dev
+      - run: uv run ruff check
+      - run: uv run ruff format --check
+      - run: uv run pytest
+      - run: uv run python src/agent.py --help
+      - run: uv run python src/demo.py
+      - run: uvx pip-audit --path .venv/lib/python3.12/site-packages

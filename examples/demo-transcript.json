@@ -1,0 +1,41 @@
+{
+  "demo": "synthetic event replay, not live audio",
+  "interruption": {
+    "enabled": true,
+    "mode": "adaptive",
+    "min_duration": 0.5,
+    "resume_false_interruption": true
+  },
+  "transcript": {
+    "schema_version": 1,
+    "false_interruptions": 0,
+    "interrupted_turns": 1,
+    "dropped_items": 0,
+    "items": [
+      {
+        "id": "demo-1",
+        "role": "user",
+        "text": "Hello, what can you help with?",
+        "interrupted": false
+      },
+      {
+        "id": "demo-2",
+        "role": "assistant",
+        "text": "I can help explain",
+        "interrupted": true
+      },
+      {
+        "id": "demo-3",
+        "role": "user",
+        "text": "Please keep it brief.",
+        "interrupted": false
+      },
+      {
+        "id": "demo-4",
+        "role": "assistant",
+        "text": "Of course. What would you like to know?",
+        "interrupted": false
+      }
+    ]
+  }
+}

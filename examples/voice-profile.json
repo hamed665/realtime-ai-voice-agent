@@ -1,0 +1,9 @@
+{
+  "name": "Demo Assistant",
+  "language": "en",
+  "tone": "warm and concise",
+  "llm_model": "google/gemma-4-31b-it",
+  "interruption_mode": "adaptive",
+  "min_interruption_duration": 0.5,
+  "resume_false_interruption": true
+}

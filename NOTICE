@@ -1,0 +1,5 @@
+Realtime AI Voice Agent — additional code Copyright 2026 Hamed Minaei.
+Based on livekit-examples/agent-starter-python at e965b2ce057679da1bdd7ebfc8b6716053b2d838.
+Original code Copyright (c) 2025 LiveKit, Inc. MIT license retained in LICENSE.
+Added voice profiles, transcript journal, observer integration, offline demo and tests are MIT licensed.
+Not endorsed by LiveKit. Model weights and hosted services retain their separate terms.
