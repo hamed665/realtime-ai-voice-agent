@@ -64,7 +64,7 @@ uvx pip-audit --path .venv/lib/python3.12/site-packages
 
 Eleven tests cover invalid profiles, bounds, redaction, duplicate transcript IDs, private file creation, no-overwrite behavior, explicit opt-in and real SDK conversation events without network calls. `.github/workflows/voice-runtime.yml` runs offline verification on PRs.
 
-Live simulations require funded LiveKit credentials and CLI authentication. The inherited simulation workflow runs on merges to main; it has not been run or claimed as passing. Before a production release, run the scenarios and agent debugger described in `AGENTS.md`, then test real speech interruptions and false backchannels. [Verification details](docs/VERIFICATION.md) separate these blockers from offline results.
+Live simulations require funded LiveKit credentials and CLI authentication. Live simulations are manual-only in this portfolio fork because they incur provider costs. The first inherited automatic merge run failed with missing LiveKit URL; no live simulation has passed. Configure only a separately authorized disposable project before manual dispatch. Before a production release, run the scenarios and agent debugger described in `AGENTS.md`, then test real speech interruptions and false backchannels. [Verification details](docs/VERIFICATION.md) separate these blockers from offline results.
 
 ## Demo
 

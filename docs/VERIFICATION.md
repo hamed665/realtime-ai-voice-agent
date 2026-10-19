@@ -33,3 +33,10 @@ The installed SDK's `voice/turn.py` and `voice/events.py` were also inspected to
 ## Remaining gates
 
 Run the LiveKit debugger and cloud text scenarios with disposable credentials, then real audio scenarios covering interruption, backchannel resumption, disconnect/close exports and language-provider compatibility. Review all provider and model terms before paid use. The added offline CI cannot substitute for those checks.
+
+
+## Post-merge dependency and simulation follow-up
+
+The first main-branch run 39302427717 passed all 11 tests, Ruff, CLI and offline replay, but its audit reported three advisory entries affecting aiohttp 3.14.3 (CVE-2026-111064, GHSA-2g87-pp6c-29x5, CVE-2026-111063). This supersedes the earlier clean audit at implementation time. The compatibility constraint now requires aiohttp >=3.14.4 and the lockfile was upgraded for that package; audit must be checked again.
+
+Inherited simulation run 39302427832 reached the CLI and failed with `url is required` because no LiveKit credentials were configured. It is not a passing simulation. The simulation workflow now requires explicit manual dispatch and fails preflight if disposable configuration is absent, before downloading models/installing CLI. Automatic paid simulation on every merge from the upstream guide is intentionally unavailable in this credential-free portfolio scope. Live agent behavior/debugger/audio quality remains unverified. The offline verification and security gate continue to run on every main push and PR.
