@@ -22,9 +22,8 @@ dev = [
 ]
 
 [tool.uv]
-# yarl 1.24.1 was published with only a cp310 wheel and no sdist, so it can't
-# install on Python 3.11+. Remove this once upstream uploads the remaining wheels.
-constraint-dependencies = ["yarl<1.24"]
+# Security floors; newer yarl releases provide supported Python wheels.
+constraint-dependencies = ["aiohttp>=3.14.4", "yarl>=1.25.1"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

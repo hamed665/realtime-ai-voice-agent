@@ -1,15 +1,5 @@
 [
   {
-    "name": "agent-starter-python",
-    "version": "1.0.0",
-    "license": "UNREVIEWED"
-  },
-  {
-    "name": "agent-starter-python",
-    "version": "1.0.0",
-    "license": "UNREVIEWED"
-  },
-  {
     "name": "aiofiles",
     "version": "25.1.0",
     "license": "Apache-2.0"
@@ -21,7 +11,7 @@
   },
   {
     "name": "aiohttp",
-    "version": "3.14.3",
+    "version": "3.14.4",
     "license": "Apache-2.0 AND MIT"
   },
   {
@@ -77,7 +67,7 @@
   {
     "name": "colorama",
     "version": "0.4.6",
-    "license": "UNREVIEWED"
+    "license": "License :: OSI Approved :: BSD License"
   },
   {
     "name": "docstring_parser",
@@ -177,12 +167,12 @@
   {
     "name": "markdown-it-py",
     "version": "4.2.0",
-    "license": "UNREVIEWED"
+    "license": "License :: OSI Approved :: MIT License"
   },
   {
     "name": "mdurl",
     "version": "0.1.2",
-    "license": "UNREVIEWED"
+    "license": "License :: OSI Approved :: MIT License"
   },
   {
     "name": "multidict",
@@ -330,6 +320,11 @@
     "license": "MIT"
   },
   {
+    "name": "realtime-ai-voice-agent",
+    "version": "0.1.0",
+    "license": "MIT (repository LICENSE)"
+  },
+  {
     "name": "requests",
     "version": "2.34.2",
     "license": "Apache-2.0"
@@ -396,7 +391,7 @@
   },
   {
     "name": "yarl",
-    "version": "1.23.0",
+    "version": "1.25.1",
     "license": "Apache-2.0"
   }
 ]
