@@ -1,4 +1,6 @@
+import asyncio
 import logging
+import os
 import textwrap
 
 from dotenv import load_dotenv
@@ -15,17 +17,25 @@ from livekit.agents import (
 )
 from livekit.plugins import ai_coustics
 
+from voice_runtime import (
+    TranscriptJournal,
+    VoiceProfile,
+    attach_observers,
+    transcript_destination,
+)
+
 logger = logging.getLogger("agent")
 
 load_dotenv(".env.local")
 
 
 class Assistant(Agent):
-    def __init__(self) -> None:
+    def __init__(self, profile: VoiceProfile | None = None) -> None:
+        profile = profile or VoiceProfile()
         super().__init__(
             # A Large Language Model (LLM) is your agent's brain, processing user input and generating a response
             # See all available models at https://docs.livekit.io/agents/models/llm/
-            llm=inference.LLM(model="google/gemma-4-31b-it"),
+            llm=inference.LLM(model=profile.llm_model),
             # To use a realtime model instead of a voice pipeline, replace the LLM
             # with a realtime model and remove the STT/TTS from the AgentSession
             # (Note: This is for OpenAI GPT-Live, the recommended speech-to-speech
@@ -66,7 +76,9 @@ class Assistant(Agent):
                 - For medical, legal, or financial topics, provide general information only and suggest consulting a qualified professional.
                 - Protect privacy and minimize sensitive data.
                 """
-            ),
+            )
+            + "\n"
+            + profile.response_instructions(),
         )
 
     # To add tools, use the @function_tool decorator.
@@ -98,11 +110,17 @@ async def my_agent(ctx: JobContext):
         "room": ctx.room.name,
     }
 
+    profile = VoiceProfile.load(os.environ.get("VOICE_PROFILE"))
+    destination = transcript_destination(dict(os.environ), ctx.job.id)
+    journal = TranscriptJournal()
+
     # Set up a voice AI pipeline using AssemblyAI, Fish Audio, and the LiveKit turn detector
     session = AgentSession(
         # Speech-to-text (STT) is your agent's ears, turning the user's speech into text that the LLM can understand
         # See all available models at https://docs.livekit.io/agents/models/stt/
-        stt=inference.STT(model="assemblyai/universal-3-6-pro", language="en"),
+        stt=inference.STT(
+            model="assemblyai/universal-3-6-pro", language=profile.language
+        ),
         # Keyterms bias the STT toward distinctive words it would otherwise misspell.
         # List your own names, brands, and jargon in `keyterms`. Detection additionally
         # extracts terms from the live conversation, such as a caller's name, and applies
@@ -126,7 +144,7 @@ async def my_agent(ctx: JobContext):
             turn_detection=inference.TurnDetector(),
             # Adaptive interruptions use the turn detector to tell a real interruption from a
             # backchannel like "mhm" or "right", so the agent keeps talking through the latter.
-            interruption={"mode": "adaptive"},
+            interruption=profile.interruption_options(),
             # allow the LLM to generate a response while waiting for the end of turn
             # See more at https://docs.livekit.io/agents/build/audio/#preemptive-generation
             preemptive_generation={"enabled": True},
@@ -138,9 +156,17 @@ async def my_agent(ctx: JobContext):
         expressive=True,
     )
 
+    attach_observers(session, journal)
+
+    async def save_transcript():
+        if destination is not None:
+            await asyncio.to_thread(journal.save, destination)
+
+    ctx.add_shutdown_callback(save_transcript)
+
     # Start the session, which initializes the voice pipeline and warms up the models
     await session.start(
-        agent=Assistant(),
+        agent=Assistant(profile),
         room=ctx.room,
         room_options=room_io.RoomOptions(
             audio_input=room_io.AudioInputOptions(
