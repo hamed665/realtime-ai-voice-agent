@@ -1,5 +1,11 @@
 # Realtime AI Voice Agent
 
+**[Hamed Minaei](https://github.com/hamed665) · Project maintainer & integration engineer**
+
+**My engineering scope:** Interruption profiles, configurable responses, opt-in redacted transcript export and event replay.
+
+[My contributions & implementation evidence](MY_CONTRIBUTIONS.md) · [Implementation PR](https://github.com/hamed665/realtime-ai-voice-agent/pull/1) · [Architecture](#architecture) · [Testing](#testing)
+
 Configurable Python voice assistant with interruption controls and privacy-conscious transcript observability, developed by Hamed Minaei on top of LiveKit's agent starter.
 
 **Status: portfolio prototype.** Offline tests run without credentials. Real STT/LLM/TTS audio, latency and interruption quality require a separate LiveKit project and have not been verified. No production service or customer data is used.
