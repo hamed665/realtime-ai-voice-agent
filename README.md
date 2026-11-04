@@ -10,6 +10,20 @@ Configurable Python voice assistant with interruption controls and privacy-consc
 
 **Status: portfolio prototype.** Offline tests run without credentials. Real STT/LLM/TTS audio, latency and interruption quality require a separate LiveKit project and have not been verified. No production service or customer data is used.
 
+## Project at a glance
+
+Configurable voice profiles, interruption settings and consent-controlled transcript observability.
+
+[Voice runtime](src/voice_runtime.py) · [Example profile](examples/voice-profile.json) · [Verification](docs/VERIFICATION.md)
+
+| Area | Implementation |
+| --- | --- |
+| Configuration | Validated profiles and interruption settings for the LiveKit pipeline. |
+| Observability | Bounded redacted transcript journals and explicit export opt-in. |
+| Foundation | LiveKit supplies audio transport, turn handling and provider integrations; offline replay verifies the added event-processing logic. |
+
+[Setup](#installation) · [Configuration](#configuration) · [Tests](#testing) · [Demo](#demo) · [Attribution](#attribution)
+
 ## Architecture
 
 | Module | Responsibility |
@@ -36,6 +50,8 @@ LiveKit owns audio interruption detection and truncation. The extension configur
 Requirements: Python 3.12 and [uv](https://docs.astral.sh/uv/).
 
 ```bash
+git clone https://github.com/hamed665/realtime-ai-voice-agent.git
+cd realtime-ai-voice-agent
 uv sync --locked --group dev
 uv run python src/demo.py
 uv run pytest
@@ -55,7 +71,7 @@ For a real call, first provision your own **disposable** LiveKit project, review
 
 LiveKit credentials remain in ignored local env files. The observer never logs conversation content. Exports are bounded to 500 items of at most 8000 characters, have mode 0600, and cannot overwrite an existing file. Transcript directories and session-derived filenames are validated. Basic redaction can miss personal or confidential information; this project is not approved for real customer transcripts.
 
-The upstream MIT notice and full Git history are retained. `uv.lock` pins resolved dependencies; `docs/dependency-licenses.json` inventories installed license metadata. Package metadata is not a complete license clearance, and hosted inference/audio enhancement may have separate commercial terms. Initial `pip-audit` found no known vulnerabilities in the installed dependency environment; rerun it before deployment.
+The upstream MIT notice and full Git history are retained. `uv.lock` pins resolved dependencies; `docs/dependency-licenses.json` inventories installed license metadata. Package metadata is not a complete license clearance, and hosted inference/audio enhancement may have separate commercial terms. Dependency audit history and the subsequent aiohttp remediation are recorded in [verification](docs/VERIFICATION.md). Rerun the audit against the installed lockfile before release.
 
 ## Testing
 
