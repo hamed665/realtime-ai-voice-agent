@@ -2,6 +2,7 @@ import asyncio
 import logging
 import os
 import textwrap
+from pathlib import Path
 
 from dotenv import load_dotenv
 from livekit.agents import (
@@ -17,6 +18,8 @@ from livekit.agents import (
 )
 from livekit.plugins import ai_coustics
 
+from clinic import ClinicStore, Reception
+from clinic_agent import ClinicAssistant
 from voice_runtime import (
     TranscriptJournal,
     VoiceProfile,
@@ -111,8 +114,13 @@ async def my_agent(ctx: JobContext):
     }
 
     profile = VoiceProfile.load(os.environ.get("VOICE_PROFILE"))
-    destination = transcript_destination(dict(os.environ), ctx.job.id)
-    journal = TranscriptJournal()
+    clinic_db = os.environ.get("CLINIC_DEMO_DB")
+    if clinic_db:
+        store = ClinicStore(Path(clinic_db))
+        await asyncio.to_thread(store.initialize)
+        agent = ClinicAssistant(profile, Reception(store, ctx.job.id))
+    else:
+        agent = Assistant(profile)
 
     # Set up a voice AI pipeline using AssemblyAI, Fish Audio, and the LiveKit turn detector
     session = AgentSession(
@@ -127,8 +135,8 @@ async def my_agent(ctx: JobContext):
         # them once the transcript corroborates the spelling.
         # See more at https://docs.livekit.io/agents/models/stt/keyterms/
         stt_context_options=STTContextOptions(
-            keyterms=["LiveKit"],
-            keyterm_detection={"enabled": True},
+            keyterms=["clinic", "Muscat"] if clinic_db else ["LiveKit"],
+            keyterm_detection={"enabled": not clinic_db},
         ),
         # Text-to-speech (TTS) is your agent's voice, turning the LLM's text into speech that the user can hear
         # See all available models as well as voice selections at https://docs.livekit.io/agents/models/tts/
@@ -147,7 +155,7 @@ async def my_agent(ctx: JobContext):
             interruption=profile.interruption_options(),
             # allow the LLM to generate a response while waiting for the end of turn
             # See more at https://docs.livekit.io/agents/build/audio/#preemptive-generation
-            preemptive_generation={"enabled": True},
+            preemptive_generation={"enabled": not clinic_db},
         ),
         # Expressive mode injects the TTS provider's markup guide into the LLM prompt, so the model
         # emits inline delivery tags (emotion, pacing, non-verbal sounds) that the TTS renders and
@@ -156,17 +164,20 @@ async def my_agent(ctx: JobContext):
         expressive=True,
     )
 
-    attach_observers(session, journal)
+    if not clinic_db:
+        destination = transcript_destination(dict(os.environ), ctx.job.id)
+        journal = TranscriptJournal()
+        attach_observers(session, journal)
 
-    async def save_transcript():
-        if destination is not None:
-            await asyncio.to_thread(journal.save, destination)
+        async def save_transcript():
+            if destination is not None:
+                await asyncio.to_thread(journal.save, destination)
 
-    ctx.add_shutdown_callback(save_transcript)
+        ctx.add_shutdown_callback(save_transcript)
 
     # Start the session, which initializes the voice pipeline and warms up the models
     await session.start(
-        agent=Assistant(profile),
+        agent=agent,
         room=ctx.room,
         room_options=room_io.RoomOptions(
             audio_input=room_io.AudioInputOptions(

@@ -1,0 +1,30 @@
+id: SCNG_clinic_reception
+name: Clinic reception
+scenarios:
+  - id: SCN_clinic_booking
+    label: Confirm a synthetic booking
+    instructions: |
+      PERSONA: An English-speaking caller who wants a demo appointment.
+      OPENING LINE: "What times are available for a demo appointment?"
+      DO, IN ORDER:
+      1. Pick the first available time and ask to review the booking.
+      2. Wait until the assistant reads back the proposed appointment.
+      3. Say exactly "confirm booking" and end after the outcome.
+    agent_expectations: >
+      Offers only available slots, reads back the selected slot, and confirms
+      the reservation only after the caller gives the explicit confirmation.
+    tags:
+      feature: booking
+  - id: SCN_clinic_policy_ar
+    label: Arabic clinic policy with source
+    instructions: |
+      PERSONA: An Arabic-speaking caller asking about the demo clinic.
+      OPENING LINE: "قبل الموعد بكم دقيقة لازم أوصل؟"
+      DO, IN ORDER:
+      1. Listen to the answer and end the conversation.
+    agent_expectations: >
+      Replies in Arabic that the caller should arrive ten minutes early,
+      attributes the information to the clinic's arrival policy,
+      and does not create a booking.
+    tags:
+      feature: grounding
