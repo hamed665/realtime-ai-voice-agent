@@ -10,6 +10,25 @@ Configurable Python voice assistant with interruption controls and privacy-consc
 
 **Status: portfolio prototype.** Offline tests run without credentials. Real STT/LLM/TTS audio, latency and interruption quality require a separate LiveKit project and have not been verified. No production service or customer data is used.
 
+## Clinic Reception Agent
+
+A bilingual LiveKit reception workflow for a fictional clinic. It looks up
+versioned administrative policies, proposes a Muscat-time appointment, waits
+for explicit confirmation from the caller's next completed turn, and can
+queue a request for human reception.
+
+**Try the complete workflow offline**
+
+```bash
+uv sync --locked --group dev
+uv run python src/clinic_demo.py
+uv run pytest tests/test_clinic.py
+```
+
+The replay uses a temporary SQLite database and synthetic data. For the
+LiveKit setup, conversation scripts and verification boundaries, see the
+[clinic reception guide](docs/CLINIC_RECEPTION.md).
+
 ## Project at a glance
 
 Configurable voice profiles, interruption settings and consent-controlled transcript observability.
